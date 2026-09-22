@@ -26,6 +26,9 @@ A small, dependency-free Go library for converting dates between Gregorian
 - Date arithmetic and comparison (`AddDays`, `DaysBetween`, `Before`/`After`, ...)
 - Layout-based formatting and Nepali-digit conversion
 - Calendar-grid helpers for building calendar UIs (`MonthCalendar`, ...)
+- Drop-in JSON encoding and `database/sql` support (`Date` implements
+  `encoding.TextMarshaler`/`TextUnmarshaler` and
+  `driver.Valuer`/`sql.Scanner`)
 - Zero runtime dependencies
 - Timezone-safe: conversion is based on calendar date, not time-of-day
 - Table-driven calendar data, verified against a live source where possible
@@ -228,6 +231,11 @@ func FromNepaliDigits(s string) string
 func FirstWeekdayOfMonth(year, month int) (time.Weekday, error)
 func WeeksInMonth(year, month int) (int, error)
 func MonthCalendar(year, month int) ([][]*Date, error) // Sunday-first, nil-padded
+
+func (d Date) MarshalText() ([]byte, error)  // encoding.TextMarshaler; same as String
+func (d *Date) UnmarshalText(data []byte) error // encoding.TextUnmarshaler; same as Parse
+func (d Date) Value() (driver.Value, error)  // database/sql/driver.Valuer
+func (d *Date) Scan(value any) error         // database/sql.Scanner
 
 var (
 	ErrInvalidYear      error

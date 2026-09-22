@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.6.0 - 2026-09-22
+
+- `Date.MarshalText` / `Date.UnmarshalText` (`encoding.TextMarshaler` /
+  `TextUnmarshaler`) — a `Date` field now encodes as the plain string
+  `"2083-06-06"` in `encoding/json` (and anything else that respects
+  `TextMarshaler`: `encoding/gob`, `encoding/csv`, `url.Values`, map keys)
+  instead of `{"Year":2083,"Month":6,"Day":6}`
+- `Date.Value` / `Date.Scan` (`database/sql/driver.Valuer` /
+  `database/sql.Scanner`) — a `Date` can be used directly as a
+  `database/sql` query argument or scanned directly out of a row. `Scan`
+  accepts a string/`[]byte` in `"YYYY-MM-DD"` form or a `time.Time` (for
+  drivers that return native DATE columns as `time.Time`); `Value` always
+  writes the `"YYYY-MM-DD"` string form
+
+Neither `MarshalText`/`Value` validates its receiver (matching `String`'s
+existing behavior); `UnmarshalText`/`Scan` validate the same way `Parse`
+does.
+
 ## v0.5.0 - 2026-09-22
 
 - `TodayBS() (Date, error)` — current system date as a BS `Date`
