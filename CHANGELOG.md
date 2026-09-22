@@ -1,13 +1,19 @@
 # Changelog
 
+## v0.3.0 - 2026-09-22
+
+- `Date.Format(layout string)` — token-based layouts (`YYYY`, `YY`, `MMMM`,
+  `MM`, `M`, `DD`, `D`, `dddd`, `ddd`)
+- `MonthNameNepali`, `Date.MonthNameNepali`
+- `ToNepaliDigits`, `FromNepaliDigits`
+
+Planned for v0.4.0: calendar-grid helpers (`MonthCalendar`, `WeeksInMonth`,
+`FirstWeekdayOfMonth`).
+
 ## v0.2.0 - 2026-09-22
 
 - `Compare`, `Date.SubDays`, `DaysBetween`
 - `Date.StartOfMonth`, `Date.EndOfMonth`, `Date.StartOfYear`, `Date.EndOfYear`, `Date.DayOfYear`
-
-Planned for later minor releases: `Format`/layout-based formatting,
-Nepali-digit conversion, `MonthNameNepali` (v0.3.0), and calendar-grid
-helpers (v0.4.0).
 
 ## v0.1.0 - 2026-09-22
 
