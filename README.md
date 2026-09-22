@@ -1,0 +1,218 @@
+# go-bs
+
+[![test](https://github.com/suprimkhatri77/go-bs/actions/workflows/test.yml/badge.svg)](https://github.com/suprimkhatri77/go-bs/actions/workflows/test.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/suprimkhatri77/go-bs.svg)](https://pkg.go.dev/github.com/suprimkhatri77/go-bs)
+[![Go Report Card](https://goreportcard.com/badge/github.com/suprimkhatri77/go-bs)](https://goreportcard.com/report/github.com/suprimkhatri77/go-bs)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+A small, dependency-free Go library for converting dates between Gregorian
+(AD) and Bikram Sambat (BS), the calendar used in Nepal.
+
+```
+✓ 122 BS years covered (1979-2100)
+✓ 1,464 BS months represented
+✓ Every supported BS date tested
+✓ AD → BS → AD round-trip tested
+✓ BS → AD → BS round-trip tested
+✓ Zero runtime dependencies
+✓ Zero network requests
+```
+
+## Features
+
+- `ADToBS` / `BSToAD` conversion
+- Supports BS years 1979–2100 inclusive
+- Strict date validation against real BS month lengths (not just shape)
+- Zero runtime dependencies
+- Timezone-safe: conversion is based on calendar date, not time-of-day
+- Table-driven calendar data, verified against a live source where possible
+  (see [docs/calendar-data.md](docs/calendar-data.md))
+- Exhaustively tested: every one of the 44,562 supported days round-trips
+  in both directions
+
+## Installation
+
+```
+go get github.com/suprimkhatri77/go-bs
+```
+
+## Usage
+
+Convert AD to BS:
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"time"
+
+	bs "github.com/suprimkhatri77/go-bs"
+)
+
+func main() {
+	ad := time.Date(2026, time.September, 22, 0, 0, 0, 0, time.UTC)
+
+	d, err := bs.ADToBS(ad)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(d) // 2083-06-06
+}
+```
+
+Convert BS to AD:
+
+```go
+d, err := bs.NewDate(2083, 6, 6)
+if err != nil {
+	log.Fatal(err)
+}
+
+ad, err := bs.BSToAD(d)
+if err != nil {
+	log.Fatal(err)
+}
+
+fmt.Println(ad.Format("2006-01-02")) // 2026-09-22
+```
+
+Validate a BS date without converting it:
+
+```go
+if !bs.IsValid(2080, 2, 32) {
+	fmt.Println("not a real Bikram Sambat date")
+}
+```
+
+Date arithmetic and comparison:
+
+```go
+d, _ := bs.NewDate(2083, 6, 15)
+
+next, _ := d.AddDays(10)
+fmt.Println(next) // 2083-06-25
+
+fmt.Println(d.Before(next)) // true
+
+weekday, _ := d.DayOfWeek()
+fmt.Println(weekday) // Thursday
+
+name, _ := d.MonthName()
+fmt.Println(name) // Ashwin
+```
+
+Parsing:
+
+```go
+d, err := bs.Parse("2083-06-15")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+## API overview
+
+```go
+const (
+	MinBSYear = 1979
+	MaxBSYear = 2100
+)
+
+type Date struct {
+	Year, Month, Day int
+}
+
+func NewDate(year, month, day int) (Date, error)
+func Parse(s string) (Date, error) // "YYYY-MM-DD"
+
+func (d Date) Valid() bool
+func (d Date) String() string // "YYYY-MM-DD"
+func (d Date) MonthName() (string, error)
+
+func (d Date) Before(other Date) bool
+func (d Date) After(other Date) bool
+func (d Date) Equal(other Date) bool
+
+func (d Date) AddDays(n int) (Date, error)
+func (d Date) DayOfWeek() (time.Weekday, error)
+
+func ADToBS(t time.Time) (Date, error)
+func BSToAD(d Date) (time.Time, error)
+
+func IsValid(year, month, day int) bool
+func IsSupportedBSYear(year int) bool
+func DaysInMonth(year, month int) (int, error)
+func DaysInYear(year int) (int, error)
+func MonthName(month int) (string, error)
+
+var (
+	ErrInvalidYear   error
+	ErrInvalidMonth  error
+	ErrInvalidDay    error
+	ErrInvalidFormat error
+	ErrOutOfRange    error
+)
+```
+
+All errors support `errors.Is`, e.g. `errors.Is(err, bs.ErrInvalidDay)`.
+
+`Date.Month` is 1-based: 1 is Baisakh, 12 is Chaitra.
+
+This is the v0.1.0 surface. Formatting layouts, Nepali-digit
+conversion, `DaysBetween`, `StartOfMonth`/`EndOfMonth`, and calendar-grid
+helpers (month view, weeks-in-month, first-weekday-of-month) are deliberately
+left for a later release rather than bolted on now — see
+[CHANGELOG.md](CHANGELOG.md).
+
+## Supported range
+
+- Bikram Sambat: **1979–2100** (`MinBSYear`–`MaxBSYear`), inclusive.
+- The corresponding Gregorian range is **1922-04-13 to 2044-04-13**, derived
+  from the verified calendar data rather than assumed.
+
+Most BS calendar libraries stop around this range because that's roughly the
+edge of what Nepal's calendar authorities have officially published in
+advance. `MaxBSYear` is expected to move out further (realistically not
+before around BS 2095) once more official data exists.
+
+## Accuracy
+
+BS month lengths are not computed from a formula — they follow the
+officially published Nepali calendar and are stored as a static,
+table-driven dataset. That dataset was cross-checked against multiple
+existing open-source implementations and, where possible, against a live
+calendar source, rather than copied from a single upstream project as-is.
+See [docs/calendar-data.md](docs/calendar-data.md) for the sources, the
+verification method, and a documented known limitation (BS years
+1979–1999 could not be checked against a live source and rely on two
+library sources agreeing with each other).
+
+## Timezone behavior
+
+`ADToBS` looks only at the `Year`, `Month` and `Day` of the given
+`time.Time` — its time-of-day and location are ignored, and the same
+Gregorian calendar date always converts to the same BS date, regardless of
+which timezone the `time.Time` is expressed in.
+
+## Testing
+
+```
+go test ./...
+go test -race ./...
+go vet ./...
+```
+
+`TestExhaustiveBSRoundTrip` and `TestExhaustiveADRoundTrip` convert every one
+of the 44,562 supported days in both directions and confirm the round trip
+is exact, rather than relying on a sample.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+MIT — see [LICENSE](LICENSE).
