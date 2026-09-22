@@ -4,7 +4,7 @@ Thanks for considering a contribution to go-bs.
 
 ## Before submitting a pull request
 
-```
+```sh
 gofmt -l .
 go vet ./...
 go test ./...

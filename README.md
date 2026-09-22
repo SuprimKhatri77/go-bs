@@ -8,7 +8,7 @@
 A small, dependency-free Go library for converting dates between Gregorian
 (AD) and Bikram Sambat (BS), the calendar used in Nepal.
 
-```
+```text
 ✓ 122 BS years covered (1979-2100)
 ✓ 1,464 BS months represented
 ✓ Every supported BS date tested
@@ -32,7 +32,7 @@ A small, dependency-free Go library for converting dates between Gregorian
 
 ## Installation
 
-```
+```sh
 go get github.com/suprimkhatri77/go-bs
 ```
 
@@ -199,7 +199,7 @@ which timezone the `time.Time` is expressed in.
 
 ## Testing
 
-```
+```sh
 go test ./...
 go test -race ./...
 go vet ./...

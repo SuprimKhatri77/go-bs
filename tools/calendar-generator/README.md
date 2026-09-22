@@ -24,7 +24,7 @@ write-up of sources, the verification method, and known limitations.
 
 ## Usage
 
-```
+```sh
 go run ./tools/calendar-generator -out data.go
 ```
 

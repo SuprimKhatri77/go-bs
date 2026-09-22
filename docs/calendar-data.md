@@ -103,7 +103,7 @@ is actually built from for 2000–2100.
 
 The package's internal anchor is:
 
-```
+```text
 BS 1979-01-01 = AD 1922-04-13
 ```
 

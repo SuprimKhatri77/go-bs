@@ -1,0 +1,10 @@
+{
+  // README/docs prose and link/badge lines routinely exceed a fixed column
+  // count; wrapping them buys nothing for a project this size.
+  "MD013": false,
+  // Fenced Go code blocks use real tabs (gofmt's format), which this rule
+  // would otherwise flag inside code blocks.
+  "MD010": {
+    "code_blocks": false
+  }
+}
