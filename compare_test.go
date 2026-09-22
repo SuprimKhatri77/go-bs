@@ -37,6 +37,22 @@ func TestBeforeAfterEqual(t *testing.T) {
 	}
 }
 
+func TestCompare(t *testing.T) {
+	a := Date{2083, 6, 6}
+	b := Date{2083, 6, 7}
+	c := Date{2083, 6, 6}
+
+	if got := Compare(a, b); got != -1 {
+		t.Errorf("Compare(%v, %v) = %d, want -1", a, b, got)
+	}
+	if got := Compare(b, a); got != 1 {
+		t.Errorf("Compare(%v, %v) = %d, want 1", b, a, got)
+	}
+	if got := Compare(a, c); got != 0 {
+		t.Errorf("Compare(%v, %v) = %d, want 0", a, c, got)
+	}
+}
+
 func TestIsSupportedBSYear(t *testing.T) {
 	if !IsSupportedBSYear(MinBSYear) || !IsSupportedBSYear(MaxBSYear) {
 		t.Errorf("IsSupportedBSYear should be true at both boundaries")

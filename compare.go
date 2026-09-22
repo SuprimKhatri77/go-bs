@@ -1,5 +1,19 @@
 package bs
 
+// Compare compares two dates and returns -1 if a is before b, 0 if they're
+// equal, and 1 if a is after b. It compares fields directly and does not
+// require either date to be valid.
+func Compare(a, b Date) int {
+	switch {
+	case dateLess(a, b):
+		return -1
+	case dateLess(b, a):
+		return 1
+	default:
+		return 0
+	}
+}
+
 // Before reports whether d is chronologically before other. It compares
 // fields directly and does not require either date to be valid.
 func (d Date) Before(other Date) bool {
