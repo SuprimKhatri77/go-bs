@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.1 - 2026-09-22
+
+- Fixed: `TodayBS` now derives "today" from Nepal Standard Time
+  (UTC+05:45) instead of the calling process's local timezone. On a
+  server configured for UTC — a common default for cloud VMs and
+  containers — `TodayBS` previously reported the wrong calendar day for
+  roughly 5h45m of every day (the window after midnight has passed in
+  Nepal but not yet in UTC). No API change; this is a behavior fix.
+
 ## v0.6.0 - 2026-09-22
 
 - `Date.MarshalText` / `Date.UnmarshalText` (`encoding.TextMarshaler` /
