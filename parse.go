@@ -23,3 +23,15 @@ func Parse(s string) (Date, error) {
 	day, _ := strconv.Atoi(m[3])
 	return NewDate(year, month, day)
 }
+
+// MustParse is like Parse but panics if s cannot be parsed instead of
+// returning an error. It's meant for cases like package-level variable
+// initialization with a literal, known-good date string — most callers
+// should use Parse.
+func MustParse(s string) Date {
+	d, err := Parse(s)
+	if err != nil {
+		panic(err)
+	}
+	return d
+}

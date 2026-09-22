@@ -31,6 +31,17 @@ func (d Date) SubDays(n int) (Date, error) {
 	return d.AddDays(-n)
 }
 
+// NextDay returns the day after d. It returns the same errors as AddDays.
+func (d Date) NextDay() (Date, error) {
+	return d.AddDays(1)
+}
+
+// PreviousDay returns the day before d. It returns the same errors as
+// AddDays.
+func (d Date) PreviousDay() (Date, error) {
+	return d.AddDays(-1)
+}
+
 // DaysBetween returns the number of calendar days from a to b: positive if b
 // is after a, negative if b is before a, zero if they're equal. It returns
 // an error wrapping ErrInvalidYear, ErrInvalidMonth or ErrInvalidDay if
@@ -62,6 +73,52 @@ func (d Date) EndOfMonth() (Date, error) {
 		return Date{}, err
 	}
 	return NewDate(d.Year, d.Month, days)
+}
+
+// NextMonth returns the date one Bikram Sambat month after d, in the same
+// day-of-month, clamped to the target month's last day if it's shorter
+// (e.g. day 31 in a 30-day month becomes day 30, rather than rolling over
+// into the following month). It returns an error wrapping ErrInvalidYear,
+// ErrInvalidMonth or ErrInvalidDay if d is not itself a valid date, or
+// ErrInvalidYear if the result falls outside the supported range.
+func (d Date) NextMonth() (Date, error) {
+	if _, err := NewDate(d.Year, d.Month, d.Day); err != nil {
+		return Date{}, err
+	}
+	year, month := d.Year, d.Month+1
+	if month > monthsPerYear {
+		month = 1
+		year++
+	}
+	return clampToMonth(year, month, d.Day)
+}
+
+// PreviousMonth returns the date one Bikram Sambat month before d, in the
+// same day-of-month, clamped to the target month's last day if it's
+// shorter. It returns the same errors as NextMonth.
+func (d Date) PreviousMonth() (Date, error) {
+	if _, err := NewDate(d.Year, d.Month, d.Day); err != nil {
+		return Date{}, err
+	}
+	year, month := d.Year, d.Month-1
+	if month < 1 {
+		month = monthsPerYear
+		year--
+	}
+	return clampToMonth(year, month, d.Day)
+}
+
+// clampToMonth builds a date in the given year/month, reducing day to that
+// month's last day if it doesn't have that many days.
+func clampToMonth(year, month, day int) (Date, error) {
+	days, err := DaysInMonth(year, month)
+	if err != nil {
+		return Date{}, err
+	}
+	if day > days {
+		day = days
+	}
+	return NewDate(year, month, day)
 }
 
 // StartOfYear returns Baisakh 1 of d's year. It returns an error wrapping
