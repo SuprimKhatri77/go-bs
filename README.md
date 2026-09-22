@@ -154,6 +154,21 @@ for _, week := range weeks {
 }
 ```
 
+`TodayBS`, `MustParse`, `NextMonth`/`PreviousMonth`, and `Age`:
+
+```go
+today, _ := bs.TodayBS()
+fmt.Println(today) // 2083-06-06 (whatever "today" is when this runs)
+
+birth := bs.MustParse("2060-06-15")
+
+next, _ := birth.NextMonth()
+fmt.Println(next) // 2060-07-15
+
+years, months, days, _ := bs.Age(birth, today)
+fmt.Println(years, months, days) // 22 11 22
+```
+
 ## API overview
 
 ```go
@@ -167,7 +182,9 @@ type Date struct {
 }
 
 func NewDate(year, month, day int) (Date, error)
-func Parse(s string) (Date, error) // "YYYY-MM-DD"
+func Parse(s string) (Date, error)    // "YYYY-MM-DD"
+func MustParse(s string) Date         // panics instead of erroring
+func TodayBS() (Date, error)
 
 func (d Date) Valid() bool
 func (d Date) String() string // "YYYY-MM-DD"
@@ -182,8 +199,13 @@ func Compare(a, b Date) int // -1, 0, 1
 
 func (d Date) AddDays(n int) (Date, error)
 func (d Date) SubDays(n int) (Date, error)
+func (d Date) NextDay() (Date, error)
+func (d Date) PreviousDay() (Date, error)
+func (d Date) NextMonth() (Date, error)     // clamps to target month's last day
+func (d Date) PreviousMonth() (Date, error) // clamps to target month's last day
 func (d Date) DayOfWeek() (time.Weekday, error)
 func DaysBetween(a, b Date) (int, error)
+func Age(birthBS, todayBS Date) (years, months, days int, err error)
 
 func (d Date) StartOfMonth() (Date, error)
 func (d Date) EndOfMonth() (Date, error)
@@ -208,11 +230,12 @@ func WeeksInMonth(year, month int) (int, error)
 func MonthCalendar(year, month int) ([][]*Date, error) // Sunday-first, nil-padded
 
 var (
-	ErrInvalidYear   error
-	ErrInvalidMonth  error
-	ErrInvalidDay    error
-	ErrInvalidFormat error
-	ErrOutOfRange    error
+	ErrInvalidYear      error
+	ErrInvalidMonth     error
+	ErrInvalidDay       error
+	ErrInvalidFormat    error
+	ErrOutOfRange       error
+	ErrInvalidDateOrder error
 )
 ```
 

@@ -1,12 +1,24 @@
 # Changelog
 
+## v0.5.0 - 2026-09-22
+
+- `TodayBS() (Date, error)` — current system date as a BS `Date`
+- `MustParse(s string) Date` — panics instead of erroring; documented as such
+- `Date.NextDay`/`Date.PreviousDay`
+- `Date.NextMonth`/`Date.PreviousMonth` — clamp to the target month's last
+  day rather than rolling over (e.g. day 31 in a 30-day month becomes day 30)
+- `Age(birthBS, todayBS Date) (years, months, days int, err error)` —
+  calendar age, not just a day count; new `ErrInvalidDateOrder` sentinel for
+  when birthBS is after todayBS
+
+These were the remaining items from the original API wishlist that didn't
+make the v0.1.0–v0.4.0 phased plan.
+
 ## v0.4.0 - 2026-09-22
 
 - `MonthCalendar(year, month int) ([][]*Date, error)` — Sunday-first,
   nil-padded week grid for building calendar UIs
 - `WeeksInMonth`, `FirstWeekdayOfMonth`
-
-This completes the API surface originally planned across v0.1.0–v0.4.0.
 
 ## v0.3.0 - 2026-09-22
 

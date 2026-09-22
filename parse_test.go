@@ -27,6 +27,22 @@ func TestParseRoundTripsWithString(t *testing.T) {
 	}
 }
 
+func TestMustParseValid(t *testing.T) {
+	d := MustParse("2083-06-06")
+	if want := (Date{2083, 6, 6}); d != want {
+		t.Errorf("MustParse = %v, want %v", d, want)
+	}
+}
+
+func TestMustParsePanicsOnInvalid(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Errorf("MustParse on invalid input did not panic")
+		}
+	}()
+	MustParse("not-a-date")
+}
+
 func TestParseInvalid(t *testing.T) {
 	cases := []struct {
 		name    string

@@ -93,6 +93,95 @@ func TestSubDays(t *testing.T) {
 	}
 }
 
+func TestNextAndPreviousDay(t *testing.T) {
+	d := Date{2083, 6, 6}
+
+	next, err := d.NextDay()
+	if err != nil {
+		t.Fatalf("NextDay: %v", err)
+	}
+	if want := (Date{2083, 6, 7}); next != want {
+		t.Errorf("NextDay() = %v, want %v", next, want)
+	}
+
+	prev, err := d.PreviousDay()
+	if err != nil {
+		t.Fatalf("PreviousDay: %v", err)
+	}
+	if want := (Date{2083, 6, 5}); prev != want {
+		t.Errorf("PreviousDay() = %v, want %v", prev, want)
+	}
+}
+
+func TestNextAndPreviousMonth(t *testing.T) {
+	d := Date{2083, 6, 15}
+
+	next, err := d.NextMonth()
+	if err != nil {
+		t.Fatalf("NextMonth: %v", err)
+	}
+	if want := (Date{2083, 7, 15}); next != want {
+		t.Errorf("NextMonth() = %v, want %v", next, want)
+	}
+
+	prev, err := d.PreviousMonth()
+	if err != nil {
+		t.Fatalf("PreviousMonth: %v", err)
+	}
+	if want := (Date{2083, 5, 15}); prev != want {
+		t.Errorf("PreviousMonth() = %v, want %v", prev, want)
+	}
+}
+
+func TestNextAndPreviousMonthYearRollover(t *testing.T) {
+	dec := Date{2083, monthsPerYear, 5}
+	next, err := dec.NextMonth()
+	if err != nil {
+		t.Fatalf("NextMonth: %v", err)
+	}
+	if want := (Date{2084, 1, 5}); next != want {
+		t.Errorf("NextMonth() across year boundary = %v, want %v", next, want)
+	}
+
+	jan := Date{2083, 1, 5}
+	prev, err := jan.PreviousMonth()
+	if err != nil {
+		t.Fatalf("PreviousMonth: %v", err)
+	}
+	if want := (Date{2082, monthsPerYear, 5}); prev != want {
+		t.Errorf("PreviousMonth() across year boundary = %v, want %v", prev, want)
+	}
+}
+
+func TestNextMonthClampsShorterMonth(t *testing.T) {
+	// Ashadh (month 3) 2083 has 32 days; Shrawan (month 4) has 31, so day 32
+	// must clamp to Shrawan's last day rather than rolling into month 5.
+	daysMonth3, _ := DaysInMonth(2083, 3)
+	daysMonth4, _ := DaysInMonth(2083, 4)
+	if daysMonth3 <= daysMonth4 {
+		t.Fatalf("test fixture assumption broken: month 3 has %d days, month 4 has %d", daysMonth3, daysMonth4)
+	}
+
+	last := Date{2083, 3, daysMonth3}
+	next, err := last.NextMonth()
+	if err != nil {
+		t.Fatalf("NextMonth: %v", err)
+	}
+	if want := (Date{2083, 4, daysMonth4}); next != want {
+		t.Errorf("NextMonth() clamp = %v, want %v", next, want)
+	}
+}
+
+func TestNextAndPreviousMonthInvalidReceiver(t *testing.T) {
+	invalid := Date{2083, 13, 1}
+	if _, err := invalid.NextMonth(); err == nil {
+		t.Errorf("NextMonth on invalid date = nil error, want error")
+	}
+	if _, err := invalid.PreviousMonth(); err == nil {
+		t.Errorf("PreviousMonth on invalid date = nil error, want error")
+	}
+}
+
 func TestDaysBetween(t *testing.T) {
 	a := Date{2083, 6, 6}
 	b := Date{2083, 6, 16}
