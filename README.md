@@ -23,6 +23,9 @@ A small, dependency-free Go library for converting dates between Gregorian
 - `ADToBS` / `BSToAD` conversion
 - Supports BS years 1979–2100 inclusive
 - Strict date validation against real BS month lengths (not just shape)
+- Date arithmetic and comparison (`AddDays`, `DaysBetween`, `Before`/`After`, ...)
+- Layout-based formatting and Nepali-digit conversion
+- Calendar-grid helpers for building calendar UIs (`MonthCalendar`, ...)
 - Zero runtime dependencies
 - Timezone-safe: conversion is based on calendar date, not time-of-day
 - Table-driven calendar data, verified against a live source where possible
@@ -134,6 +137,23 @@ name, _ := d.MonthNameNepali()
 fmt.Println(name) // असोज
 ```
 
+Building a calendar UI:
+
+```go
+weeks, _ := bs.MonthCalendar(2083, 6) // [][]*bs.Date, Sunday-first, nil-padded
+
+for _, week := range weeks {
+	for _, day := range week {
+		if day == nil {
+			fmt.Print("   ") // no day of this month in this cell
+		} else {
+			fmt.Printf("%2d ", day.Day)
+		}
+	}
+	fmt.Println()
+}
+```
+
 ## API overview
 
 ```go
@@ -183,6 +203,10 @@ func MonthNameNepali(month int) (string, error)
 func ToNepaliDigits(s string) string
 func FromNepaliDigits(s string) string
 
+func FirstWeekdayOfMonth(year, month int) (time.Weekday, error)
+func WeeksInMonth(year, month int) (int, error)
+func MonthCalendar(year, month int) ([][]*Date, error) // Sunday-first, nil-padded
+
 var (
 	ErrInvalidYear   error
 	ErrInvalidMonth  error
@@ -196,9 +220,8 @@ All errors support `errors.Is`, e.g. `errors.Is(err, bs.ErrInvalidDay)`.
 
 `Date.Month` is 1-based: 1 is Baisakh, 12 is Chaitra.
 
-Calendar-grid helpers (month view, weeks-in-month, first-weekday-of-month)
-are still on the way in a later minor release — see
-[CHANGELOG.md](CHANGELOG.md).
+`MonthCalendar`'s weeks run Sunday through Saturday, matching how Nepali
+calendars are conventionally laid out (Hamro Patro included).
 
 ## Supported range
 

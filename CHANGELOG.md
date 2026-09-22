@@ -1,14 +1,19 @@
 # Changelog
 
+## v0.4.0 - 2026-09-22
+
+- `MonthCalendar(year, month int) ([][]*Date, error)` — Sunday-first,
+  nil-padded week grid for building calendar UIs
+- `WeeksInMonth`, `FirstWeekdayOfMonth`
+
+This completes the API surface originally planned across v0.1.0–v0.4.0.
+
 ## v0.3.0 - 2026-09-22
 
 - `Date.Format(layout string)` — token-based layouts (`YYYY`, `YY`, `MMMM`,
   `MM`, `M`, `DD`, `D`, `dddd`, `ddd`)
 - `MonthNameNepali`, `Date.MonthNameNepali`
 - `ToNepaliDigits`, `FromNepaliDigits`
-
-Planned for v0.4.0: calendar-grid helpers (`MonthCalendar`, `WeeksInMonth`,
-`FirstWeekdayOfMonth`).
 
 ## v0.2.0 - 2026-09-22
 
