@@ -178,8 +178,8 @@ All errors support `errors.Is`, e.g. `errors.Is(err, bs.ErrInvalidDay)`.
 `Date.Month` is 1-based: 1 is Baisakh, 12 is Chaitra.
 
 Formatting layouts, Nepali-digit conversion, and calendar-grid helpers (month
-view, weeks-in-month, first-weekday-of-month) are still on the way for
-v0.2.0 rather than bolted on now — see [CHANGELOG.md](CHANGELOG.md).
+view, weeks-in-month, first-weekday-of-month) are still on the way in later
+minor releases rather than bolted on now — see [CHANGELOG.md](CHANGELOG.md).
 
 ## Supported range
 

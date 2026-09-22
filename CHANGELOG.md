@@ -1,12 +1,13 @@
 # Changelog
 
-## Unreleased (accumulating toward v0.2.0)
+## v0.2.0 - 2026-09-22
 
 - `Compare`, `Date.SubDays`, `DaysBetween`
 - `Date.StartOfMonth`, `Date.EndOfMonth`, `Date.StartOfYear`, `Date.EndOfYear`, `Date.DayOfYear`
 
-Still to come before v0.2.0 ships: `Format`/layout-based formatting,
-Nepali-digit conversion, `MonthNameNepali`, and calendar-grid helpers.
+Planned for later minor releases: `Format`/layout-based formatting,
+Nepali-digit conversion, `MonthNameNepali` (v0.3.0), and calendar-grid
+helpers (v0.4.0).
 
 ## v0.1.0 - 2026-09-22
 
