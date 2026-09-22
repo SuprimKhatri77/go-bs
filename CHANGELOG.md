@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.2.0 - 2026-09-22
+
+- `Compare`, `Date.SubDays`, `DaysBetween`
+- `Date.StartOfMonth`, `Date.EndOfMonth`, `Date.StartOfYear`, `Date.EndOfYear`, `Date.DayOfYear`
+
+Planned for later minor releases: `Format`/layout-based formatting,
+Nepali-digit conversion, `MonthNameNepali` (v0.3.0), and calendar-grid
+helpers (v0.4.0).
+
 ## v0.1.0 - 2026-09-22
 
 - `ADToBS` / `BSToAD` conversion
@@ -11,12 +20,3 @@
 - Static, verified calendar dataset (see `docs/calendar-data.md`)
 - Exhaustive round-trip tests over every supported day
 - Zero runtime dependencies
-
-## Planned for v0.2.0
-
-- `Compare`, `SubDays`, `DaysBetween`
-- `StartOfMonth`, `EndOfMonth`, `StartOfYear`, `EndOfYear`, `DayOfYear`
-- `Format`/layout-based formatting, Nepali-digit conversion
-  (`ToNepaliDigits`/`FromNepaliDigits`), `MonthNameNepali`
-- Calendar-grid helpers (`MonthCalendar`, `WeeksInMonth`,
-  `FirstWeekdayOfMonth`) for building calendar UIs

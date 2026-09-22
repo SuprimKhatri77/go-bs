@@ -102,6 +102,13 @@ fmt.Println(weekday) // Thursday
 
 name, _ := d.MonthName()
 fmt.Println(name) // Ashwin
+
+diff, _ := bs.DaysBetween(d, next)
+fmt.Println(diff) // 10
+
+start, _ := d.StartOfMonth()
+end, _ := d.EndOfMonth()
+fmt.Println(start, end) // 2083-06-01 2083-06-31
 ```
 
 Parsing:
@@ -135,9 +142,18 @@ func (d Date) MonthName() (string, error)
 func (d Date) Before(other Date) bool
 func (d Date) After(other Date) bool
 func (d Date) Equal(other Date) bool
+func Compare(a, b Date) int // -1, 0, 1
 
 func (d Date) AddDays(n int) (Date, error)
+func (d Date) SubDays(n int) (Date, error)
 func (d Date) DayOfWeek() (time.Weekday, error)
+func DaysBetween(a, b Date) (int, error)
+
+func (d Date) StartOfMonth() (Date, error)
+func (d Date) EndOfMonth() (Date, error)
+func (d Date) StartOfYear() (Date, error)
+func (d Date) EndOfYear() (Date, error)
+func (d Date) DayOfYear() (int, error)
 
 func ADToBS(t time.Time) (Date, error)
 func BSToAD(d Date) (time.Time, error)
@@ -161,11 +177,9 @@ All errors support `errors.Is`, e.g. `errors.Is(err, bs.ErrInvalidDay)`.
 
 `Date.Month` is 1-based: 1 is Baisakh, 12 is Chaitra.
 
-This is the v0.1.0 surface. Formatting layouts, Nepali-digit
-conversion, `DaysBetween`, `StartOfMonth`/`EndOfMonth`, and calendar-grid
-helpers (month view, weeks-in-month, first-weekday-of-month) are deliberately
-left for a later release rather than bolted on now — see
-[CHANGELOG.md](CHANGELOG.md).
+Formatting layouts, Nepali-digit conversion, and calendar-grid helpers (month
+view, weeks-in-month, first-weekday-of-month) are still on the way in later
+minor releases rather than bolted on now — see [CHANGELOG.md](CHANGELOG.md).
 
 ## Supported range
 
