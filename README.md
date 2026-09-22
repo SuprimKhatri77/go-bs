@@ -120,6 +120,20 @@ if err != nil {
 }
 ```
 
+Formatting and Nepali digits:
+
+```go
+d, _ := bs.NewDate(2083, 6, 6)
+
+s, _ := d.Format("dddd, MMMM D, YYYY")
+fmt.Println(s) // Tuesday, Ashwin 6, 2083
+
+fmt.Println(bs.ToNepaliDigits(d.String())) // २०८३-०६-०६
+
+name, _ := d.MonthNameNepali()
+fmt.Println(name) // असोज
+```
+
 ## API overview
 
 ```go
@@ -138,6 +152,8 @@ func Parse(s string) (Date, error) // "YYYY-MM-DD"
 func (d Date) Valid() bool
 func (d Date) String() string // "YYYY-MM-DD"
 func (d Date) MonthName() (string, error)
+func (d Date) MonthNameNepali() (string, error)
+func (d Date) Format(layout string) (string, error) // e.g. "YYYY-MM-DD"
 
 func (d Date) Before(other Date) bool
 func (d Date) After(other Date) bool
@@ -163,6 +179,9 @@ func IsSupportedBSYear(year int) bool
 func DaysInMonth(year, month int) (int, error)
 func DaysInYear(year int) (int, error)
 func MonthName(month int) (string, error)
+func MonthNameNepali(month int) (string, error)
+func ToNepaliDigits(s string) string
+func FromNepaliDigits(s string) string
 
 var (
 	ErrInvalidYear   error
@@ -177,9 +196,9 @@ All errors support `errors.Is`, e.g. `errors.Is(err, bs.ErrInvalidDay)`.
 
 `Date.Month` is 1-based: 1 is Baisakh, 12 is Chaitra.
 
-Formatting layouts, Nepali-digit conversion, and calendar-grid helpers (month
-view, weeks-in-month, first-weekday-of-month) are still on the way in later
-minor releases rather than bolted on now — see [CHANGELOG.md](CHANGELOG.md).
+Calendar-grid helpers (month view, weeks-in-month, first-weekday-of-month)
+are still on the way in a later minor release — see
+[CHANGELOG.md](CHANGELOG.md).
 
 ## Supported range
 
