@@ -3,6 +3,7 @@ package bs
 import (
 	"errors"
 	"testing"
+	"time"
 )
 
 func TestMonthNameNepali(t *testing.T) {
@@ -85,5 +86,45 @@ func TestNepaliDigitsRoundTrip(t *testing.T) {
 	roundTripped := FromNepaliDigits(ToNepaliDigits(original))
 	if roundTripped != original {
 		t.Errorf("round trip = %q, want %q", roundTripped, original)
+	}
+}
+
+func TestWeekdayNameNepali(t *testing.T) {
+	want := []string{"आइतवार", "सोमवार", "मंगलवार", "बुधवार", "बिहिवार", "शुक्रवार", "शनिवार"}
+	for weekday := time.Sunday; weekday <= time.Saturday; weekday++ {
+		got, err := WeekdayNameNepali(weekday)
+		if err != nil {
+			t.Fatalf("WeekdayNameNepali(%v): %v", weekday, err)
+		}
+		if got != want[weekday] {
+			t.Errorf("WeekdayNameNepali(%v) = %q, want %q", weekday, got, want[weekday])
+		}
+	}
+	for _, weekday := range []time.Weekday{-1, 7} {
+		if _, err := WeekdayNameNepali(weekday); !errors.Is(err, ErrInvalidWeekday) {
+			t.Errorf("WeekdayNameNepali(%d) error = %v, want wrapping ErrInvalidWeekday", weekday, err)
+		}
+	}
+}
+
+func TestDateWeekdayNameNepali(t *testing.T) {
+	d := Date{2083, 6, 6} // Tuesday, AD 2026-09-22
+	name, err := d.WeekdayNameNepali()
+	if err != nil {
+		t.Fatalf("WeekdayNameNepali: %v", err)
+	}
+	if name != "मंगलवार" {
+		t.Errorf("WeekdayNameNepali() = %q, want %q", name, "मंगलवार")
+	}
+	if _, err := (Date{2083, 13, 1}).WeekdayNameNepali(); !errors.Is(err, ErrInvalidMonth) {
+		t.Errorf("WeekdayNameNepali on invalid date error = %v, want wrapping ErrInvalidMonth", err)
+	}
+}
+
+func TestWeekdayShortNamesNepaliAreStems(t *testing.T) {
+	for i, short := range weekdayShortNamesNepali {
+		if full := weekdayNamesNepali[i]; short+"वार" != full {
+			t.Errorf("weekdayShortNamesNepali[%d] = %q, want %q without its वार suffix", i, short, full)
+		}
 	}
 }

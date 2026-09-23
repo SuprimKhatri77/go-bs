@@ -19,8 +19,8 @@ calendars, for BS years `MinBSYear`–`MaxBSYear` (1979–2100). Single package
 | `compare.go` | `Compare`, `Before`/`After`/`Equal` |
 | `arithmetic.go` | `AddDays`, `DaysBetween`, `StartOfMonth`/`EndOfMonth`, ... |
 | `calendar.go` | `MonthCalendar`, `WeeksInMonth`, `FirstWeekdayOfMonth` |
-| `format.go` | `Date.Format` (token-based layouts) |
-| `nepali.go` | `MonthNameNepali`, `ToNepaliDigits`/`FromNepaliDigits` |
+| `format.go` | `Date.Format`, `Date.FormatNepali` (token-based layouts) |
+| `nepali.go` | `MonthNameNepali`, `WeekdayNameNepali`, `ToNepaliDigits`/`FromNepaliDigits` |
 | `parse.go` | `Parse`, `MustParse` |
 | `today.go` | `TodayBS` |
 | `age.go` | `Age` |

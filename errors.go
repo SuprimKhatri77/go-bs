@@ -24,6 +24,10 @@ var (
 	// shaped like "YYYY-MM-DD".
 	ErrInvalidFormat = errors.New("bs: invalid date format")
 
+	// ErrInvalidWeekday is returned when a weekday is not in the range
+	// time.Sunday through time.Saturday.
+	ErrInvalidWeekday = errors.New("bs: invalid weekday")
+
 	// ErrInvalidDateOrder is returned when a function expecting dates in a
 	// particular order (e.g. Age's birth date before its reference date)
 	// gets them the wrong way round.

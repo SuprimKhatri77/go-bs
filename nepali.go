@@ -3,6 +3,7 @@ package bs
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 // monthNamesNepali holds the Nepali (Devanagari) names of the Bikram Sambat
@@ -12,6 +13,22 @@ import (
 var monthNamesNepali = [monthsPerYear]string{
 	"वैशाख", "जेठ", "असार", "साउन", "भदौ", "असोज",
 	"कार्तिक", "मंसिर", "पुष", "माघ", "फागुन", "चैत",
+}
+
+// weekdayNamesNepali holds the Nepali (Devanagari) weekday names, indexed by
+// time.Weekday (Sunday first). Spelled as Hamro Patro's calendar spells them
+// (its weekday column headers, e.g. "आइतवार"), the same source as
+// monthNamesNepali. Nepal Academy's standard spelling uses -बार instead
+// (e.g. "आइतबार"); both are in common use.
+var weekdayNamesNepali = [7]string{
+	"आइतवार", "सोमवार", "मंगलवार", "बुधवार", "बिहिवार", "शुक्रवार", "शनिवार",
+}
+
+// weekdayShortNamesNepali holds the short Nepali weekday names used by
+// FormatNepali's ddd token: each full name in weekdayNamesNepali without its
+// "वार" suffix, as printed Nepali calendars usually head their columns.
+var weekdayShortNamesNepali = [7]string{
+	"आइत", "सोम", "मंगल", "बुध", "बिहि", "शुक्र", "शनि",
 }
 
 // nepaliDigits maps ASCII digits 0-9 to their Devanagari equivalents.
@@ -29,6 +46,28 @@ func MonthNameNepali(month int) (string, error) {
 // MonthNameNepali returns the Devanagari name of d's month.
 func (d Date) MonthNameNepali() (string, error) {
 	return MonthNameNepali(d.Month)
+}
+
+// WeekdayNameNepali returns the Nepali (Devanagari) name of the given
+// weekday, e.g. "आइतवार" for time.Sunday. It returns an error wrapping
+// ErrInvalidWeekday if weekday is not in the range time.Sunday through
+// time.Saturday.
+func WeekdayNameNepali(weekday time.Weekday) (string, error) {
+	if weekday < time.Sunday || weekday > time.Saturday {
+		return "", fmt.Errorf("%w: %d", ErrInvalidWeekday, weekday)
+	}
+	return weekdayNamesNepali[weekday], nil
+}
+
+// WeekdayNameNepali returns the Nepali (Devanagari) name of the weekday d
+// falls on, e.g. "बुधवार". It returns an error wrapping ErrInvalidYear,
+// ErrInvalidMonth or ErrInvalidDay if d is not a valid date.
+func (d Date) WeekdayNameNepali() (string, error) {
+	weekday, err := d.DayOfWeek()
+	if err != nil {
+		return "", err
+	}
+	return WeekdayNameNepali(weekday)
 }
 
 // ToNepaliDigits replaces every ASCII digit (0-9) in s with its Devanagari

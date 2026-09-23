@@ -30,6 +30,23 @@ type formatToken struct {
 // copied through unchanged. It returns an error wrapping ErrInvalidYear,
 // ErrInvalidMonth or ErrInvalidDay if d is not a valid date.
 func (d Date) Format(layout string) (string, error) {
+	return d.format(layout, false)
+}
+
+// FormatNepali is like Format, but renders every token in Nepali: numbers
+// in Devanagari digits, MMMM as the Nepali month name (see
+// MonthNameNepali), dddd as the Nepali weekday name (see
+// WeekdayNameNepali) and ddd as its short form, e.g. "बुध" for "बुधवार".
+// For example, "dddd, MMMM D, YYYY" renders as "बुधवार, असोज ७, २०८३".
+//
+// Characters in layout that aren't part of a token, including any ASCII
+// digits, are copied through unchanged. It returns the same errors as
+// Format.
+func (d Date) FormatNepali(layout string) (string, error) {
+	return d.format(layout, true)
+}
+
+func (d Date) format(layout string, nepali bool) (string, error) {
 	if _, err := NewDate(d.Year, d.Month, d.Day); err != nil {
 		return "", err
 	}
@@ -37,18 +54,28 @@ func (d Date) Format(layout string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	monthName := monthNames[d.Month-1]
 	weekdayName := weekday.String()
+	weekdayShort := weekdayName[:3]
+	digits := func(s string) string { return s }
+	if nepali {
+		monthName = monthNamesNepali[d.Month-1]
+		weekdayName = weekdayNamesNepali[weekday]
+		weekdayShort = weekdayShortNamesNepali[weekday]
+		digits = ToNepaliDigits
+	}
 
 	tokens := []formatToken{
-		{"YYYY", fmt.Sprintf("%04d", d.Year)},
-		{"MMMM", monthNames[d.Month-1]},
+		{"YYYY", digits(fmt.Sprintf("%04d", d.Year))},
+		{"MMMM", monthName},
 		{"dddd", weekdayName},
-		{"ddd", weekdayName[:3]},
-		{"DD", fmt.Sprintf("%02d", d.Day)},
-		{"MM", fmt.Sprintf("%02d", d.Month)},
-		{"YY", fmt.Sprintf("%02d", d.Year%100)},
-		{"D", strconv.Itoa(d.Day)},
-		{"M", strconv.Itoa(d.Month)},
+		{"ddd", weekdayShort},
+		{"DD", digits(fmt.Sprintf("%02d", d.Day))},
+		{"MM", digits(fmt.Sprintf("%02d", d.Month))},
+		{"YY", digits(fmt.Sprintf("%02d", d.Year%100))},
+		{"D", digits(strconv.Itoa(d.Day))},
+		{"M", digits(strconv.Itoa(d.Month))},
 	}
 
 	var b strings.Builder
