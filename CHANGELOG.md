@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.7.0 - Unreleased
+
+- `Date.FormatNepali(layout string)` — the same layout tokens as `Format`,
+  rendered in Nepali: Devanagari digits, Nepali month names (`MMMM`),
+  Nepali weekday names (`dddd`) and their short forms (`ddd`), e.g.
+  `"dddd, MMMM D, YYYY"` renders as `"मंगलवार, असोज ६, २०८३"`. Literal
+  characters in the layout are copied unchanged.
+- `WeekdayNameNepali(time.Weekday)`, `Date.WeekdayNameNepali()` — Nepali
+  weekday names, spelled as Hamro Patro's calendar spells them (आइतवार,
+  सोमवार, मंगलवार, बुधवार, बिहिवार, शुक्रवार, शनिवार), the same source as
+  the Nepali month names. The short forms used by `ddd` drop the "वार"
+  suffix (आइत, सोम, …).
+- New `ErrInvalidWeekday` sentinel, for a `time.Weekday` outside
+  `time.Sunday`..`time.Saturday`.
+
 ## v0.6.1 - 2026-09-22
 
 - Fixed: `TodayBS` now derives "today" from Nepal Standard Time

@@ -24,7 +24,8 @@ A small, dependency-free Go library for converting dates between Gregorian
 - Supports BS years 1979–2100 inclusive
 - Strict date validation against real BS month lengths (not just shape)
 - Date arithmetic and comparison (`AddDays`, `DaysBetween`, `Before`/`After`, ...)
-- Layout-based formatting and Nepali-digit conversion
+- Layout-based formatting, in English or Nepali (Devanagari digits, Nepali
+  month and weekday names)
 - Calendar-grid helpers for building calendar UIs (`MonthCalendar`, ...)
 - Drop-in JSON encoding and `database/sql` support (`Date` implements
   `encoding.TextMarshaler`/`TextUnmarshaler` and
@@ -138,7 +139,18 @@ fmt.Println(bs.ToNepaliDigits(d.String())) // २०८३-०६-०६
 
 name, _ := d.MonthNameNepali()
 fmt.Println(name) // असोज
+
+weekday, _ := d.WeekdayNameNepali()
+fmt.Println(weekday) // मंगलवार
+
+s, _ = d.FormatNepali("dddd, MMMM D, YYYY")
+fmt.Println(s) // मंगलवार, असोज ६, २०८३
 ```
+
+`FormatNepali` takes the same layout tokens as `Format`, and renders numbers
+in Devanagari digits and names in Nepali. The Nepali weekday names follow
+Hamro Patro's spelling (आइतवार, सोमवार, …); `ddd` gives the short form
+without "वार" (आइत, सोम, …).
 
 Building a calendar UI:
 
@@ -194,6 +206,8 @@ func (d Date) String() string // "YYYY-MM-DD"
 func (d Date) MonthName() (string, error)
 func (d Date) MonthNameNepali() (string, error)
 func (d Date) Format(layout string) (string, error) // e.g. "YYYY-MM-DD"
+func (d Date) FormatNepali(layout string) (string, error) // same tokens, in Nepali
+func (d Date) WeekdayNameNepali() (string, error)
 
 func (d Date) Before(other Date) bool
 func (d Date) After(other Date) bool
@@ -225,6 +239,7 @@ func DaysInMonth(year, month int) (int, error)
 func DaysInYear(year int) (int, error)
 func MonthName(month int) (string, error)
 func MonthNameNepali(month int) (string, error)
+func WeekdayNameNepali(weekday time.Weekday) (string, error)
 func ToNepaliDigits(s string) string
 func FromNepaliDigits(s string) string
 
@@ -244,6 +259,7 @@ var (
 	ErrInvalidFormat    error
 	ErrOutOfRange       error
 	ErrInvalidDateOrder error
+	ErrInvalidWeekday   error
 )
 ```
 

@@ -116,3 +116,99 @@ func TestFormatInvalidDate(t *testing.T) {
 		t.Errorf("Format error = %v, want wrapping ErrInvalidYear", err)
 	}
 }
+
+func TestFormatNepali(t *testing.T) {
+	d := Date{2083, 6, 6} // Tuesday, AD 2026-09-22
+
+	cases := []struct {
+		layout string
+		want   string
+	}{
+		{"YYYY-MM-DD", "२०८३-०६-०६"},
+		{"YY-M-D", "८३-६-६"},
+		{"MMMM D, YYYY", "असोज ६, २०८३"},
+		{"dddd, MMMM D, YYYY", "मंगलवार, असोज ६, २०८३"},
+		{"ddd", "मंगल"},
+		{"मिति: YYYY/MM/DD", "मिति: २०८३/०६/०६"},
+		{"YYYY 1", "२०८३ 1"}, // literal ASCII digits are copied, not converted
+		{"no tokens here", "no tokens here"},
+		{"", ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.layout, func(t *testing.T) {
+			got, err := d.FormatNepali(tc.layout)
+			if err != nil {
+				t.Fatalf("FormatNepali(%q): %v", tc.layout, err)
+			}
+			if got != tc.want {
+				t.Errorf("FormatNepali(%q) = %q, want %q", tc.layout, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestFormatNepaliSingleDigitDay(t *testing.T) {
+	d := Date{2083, 1, 1}
+	got, err := d.FormatNepali("D MMMM YYYY, dddd")
+	if err != nil {
+		t.Fatalf("FormatNepali: %v", err)
+	}
+	if want := "१ वैशाख २०८३, मंगलवार"; got != want {
+		t.Errorf("FormatNepali = %q, want %q", got, want)
+	}
+}
+
+// TestFormatNepaliMatchesFormatExhaustive checks, for every supported date,
+// that FormatNepali is exactly Format with Nepali digits and names.
+func TestFormatNepaliMatchesFormatExhaustive(t *testing.T) {
+	for year := MinBSYear; year <= MaxBSYear; year++ {
+		for month := 1; month <= monthsPerYear; month++ {
+			days, err := DaysInMonth(year, month)
+			if err != nil {
+				t.Fatalf("DaysInMonth(%d, %d): %v", year, month, err)
+			}
+			for day := 1; day <= days; day++ {
+				d := Date{year, month, day}
+				got, err := d.FormatNepali("YYYY-MM-DD YY M D ddd dddd MMMM")
+				if err != nil {
+					t.Fatalf("FormatNepali(%v): %v", d, err)
+				}
+				english, err := d.Format("YYYY-MM-DD YY M D")
+				if err != nil {
+					t.Fatalf("Format(%v): %v", d, err)
+				}
+				weekday, _ := d.DayOfWeek()
+				weekdayName, _ := WeekdayNameNepali(weekday)
+				monthName, _ := MonthNameNepali(month)
+				want := ToNepaliDigits(english) + " " + weekdayShortNamesNepali[weekday] + " " + weekdayName + " " + monthName
+				if got != want {
+					t.Fatalf("FormatNepali for %v = %q, want %q", d, got, want)
+				}
+			}
+		}
+	}
+}
+
+func TestFormatNepaliRoundTripsWithParse(t *testing.T) {
+	original := Date{2083, 6, 6}
+	s, err := original.FormatNepali("YYYY-MM-DD")
+	if err != nil {
+		t.Fatalf("FormatNepali: %v", err)
+	}
+	back, err := Parse(FromNepaliDigits(s))
+	if err != nil {
+		t.Fatalf("Parse(FromNepaliDigits(%q)): %v", s, err)
+	}
+	if back != original {
+		t.Errorf("round trip = %v, want %v", back, original)
+	}
+}
+
+func TestFormatNepaliInvalidDate(t *testing.T) {
+	if _, err := (Date{2083, 13, 1}).FormatNepali("YYYY"); !errors.Is(err, ErrInvalidMonth) {
+		t.Errorf("FormatNepali error = %v, want wrapping ErrInvalidMonth", err)
+	}
+	if _, err := (Date{MinBSYear - 1, 1, 1}).FormatNepali("YYYY"); !errors.Is(err, ErrInvalidYear) {
+		t.Errorf("FormatNepali error = %v, want wrapping ErrInvalidYear", err)
+	}
+}
