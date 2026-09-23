@@ -88,7 +88,7 @@ fmt.Println(ad.Format("2006-01-02")) // 2026-09-22
 Validate a BS date without converting it:
 
 ```go
-if !bs.IsValid(2080, 2, 32) {
+if !bs.IsValid(2083, 2, 32) { // Jestha 2083 has 31 days
 	fmt.Println("not a real Bikram Sambat date")
 }
 ```
