@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.7.0 - Unreleased
+## v0.7.0 - 2026-09-23
 
 - `Date.FormatNepali(layout string)` — the same layout tokens as `Format`,
   rendered in Nepali: Devanagari digits, Nepali month names (`MMMM`),
